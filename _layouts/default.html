@@ -1,38 +1,14 @@
 ---
 layout: default_no_header
 ---
-      <div class="site-header">
-        <div class="r">
-          <div class=g-12>
-            <p class=site-header-copy>
-              <span class="lined-header-span">You're reading {{ page.youre_reading}} 
-                <a href="/">JJT.io</a>, a web development
-                blog by <a href="/about">Jason Trill</a>
-              </span>
-            </p>
-          </div>
-          <!--
-          <div class="g-4 text-right">
-            <p>You're reading an article on</p>
-          </div>
-          <div class="site-title-g">
-            <a href="/" class="site-title">
-              <span class="st1">J</span>
-              <span class="st2">J</span>
-              <span class="st3">T</span>
-              <span class="st4">.</span>
-              <span class="st5">I</span>
-              <span class="st6">O</span>
-            </a>
-          </div>
-
-          <div class="g-4">
-            <p>which is a blog by Jason Trill</p>
-          </div>
-          -->
-        </div>
+      <div class="side">
+        <h1><a href="/">Woodshop506</a></h1>
+        <ul>
+          {% for post in site.posts  %}
+            <li><a href="{{ post.url }}">{{ post.title }}</a> <span>{{ post.date | date_to_string }}</span></li>
+          {% endfor %}
+        </ul>
       </div>
-
       <div class=site-content>
         {{ content }}
       </div>
