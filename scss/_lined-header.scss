@@ -1,0 +1,29 @@
+.lined-header {
+  line-height: 1.5;
+  text-align: center;
+}
+.lined-header-span {
+  display: inline-block;
+  position: relative;  
+  padding-left:10px;
+  padding-right:10px;
+}
+.lined-header-span:before,
+.lined-header-span:after {
+  $line-color: lighten($solarized-1, 20%); 
+  content: "";
+  position: absolute;
+  height: 3px;
+  border-bottom: 1px solid $line-color;
+  border-top: 1px solid $line-color;
+  top: 0.6em;
+  width: 600px;
+}
+.lined-header-span:before {
+  right: 100%;
+}
+.lined-header-span:after {
+  left: 100%;
+}
+
+

@@ -1,0 +1,11 @@
+{
+  "name": "jjt.io",
+  "version": "0.0.0",
+  "dependencies": {
+    "solarized": "~0.1.2",
+    "pure-place": "~0.2.4",
+    "fira": "~0.1.0",
+    "normalize-css": "~2.1.3",
+    "underscore": "~1.5.2"
+  }
+}

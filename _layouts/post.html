@@ -1,0 +1,48 @@
+---
+layout: default
+youre_reading: "an article on"
+---
+<div class="r post-body">
+  <div class="g-12">
+      <p class="post-meta">{{ page.date | date_to_string }}</p>
+      <h1>{{ page.title }}</h1>
+      {{ content }}
+  </div>
+</div>
+
+<div class="r">
+  <div class="g-12">
+    <h2>Comments <span class='subhead'>(Disqus, naturally)</span></h2>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'jjtio';
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  </div>
+</div>
+
+<div class="r">
+ <div class="g-12">
+   <p><em>Suggestions? Ping me <a href="http://twitter.com/jasontrill/">on Twitter @jasontrill</a>,
+    or <a href="https://github.com/jjt/jjt.github.io/issues">open a Github issue</a>.
+    Pull requests are gladly accepted, but open an issue first to talk about any major changes.
+  </em></p>
+
+    <h2>Recent articles</h2>
+      <ul class="posts list-plain list-delta">
+        {% for post in site.posts limit:5  %}
+          <li><a href="{{ post.url }}">{{ post.title }}</a> <span>{{ post.date | date_to_string }}</span></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+ </div>
+</div>

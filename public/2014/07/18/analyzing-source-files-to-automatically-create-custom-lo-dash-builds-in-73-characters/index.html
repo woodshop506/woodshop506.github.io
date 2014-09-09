@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Analyzing source files to automatically create custom Lo-Dash builds in 73 characters</title>
+        <meta name="viewport" content="width=device-width">
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="stylesheet" href="/css/style.css" type="text/css" media="all" />
+        <link href='http://fonts.googleapis.com/css?family=Lora:400,700' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+      <!--
+      <div class="stripey-guy">
+        <div class="container">
+          <div class="inner">
+            <div></div><div></div><div></div><div></div><div></div><div></div>
+          </div>
+        </div>
+      </div>
+      -->
+
+      
+
+      <div id="main" class="container">
+              <div class="site-header">
+        <div class="r">
+          <div class=g-12>
+            <p class=site-header-copy>
+              <span class="lined-header-span">You're reading an article on 
+                <a href="/">JJT.io</a>, a web development
+                blog by <a href="/about">Jason Trill</a>
+              </span>
+            </p>
+          </div>
+          <!--
+          <div class="g-4 text-right">
+            <p>You're reading an article on</p>
+          </div>
+          <div class="site-title-g">
+            <a href="/" class="site-title">
+              <span class="st1">J</span>
+              <span class="st2">J</span>
+              <span class="st3">T</span>
+              <span class="st4">.</span>
+              <span class="st5">I</span>
+              <span class="st6">O</span>
+            </a>
+          </div>
+
+          <div class="g-4">
+            <p>which is a blog by Jason Trill</p>
+          </div>
+          -->
+        </div>
+      </div>
+
+      <div class=site-content>
+        <div class="r post-body">
+  <div class="g-12">
+      <p class="post-meta">18 Jul 2014</p>
+      <h1>Analyzing source files to automatically create custom Lo-Dash builds in 73 characters</h1>
+      <h2 id='tldr'>TL;DR</h2>
+
+<pre><code>$&gt; lodash include=$(ack &#39;_\.(\w*)&#39; -h --output &#39;$1&#39; | sort -u | tr &#39;\n&#39; &#39;,&#39;)</code></pre>
+
+<h2 id='underscorelodash'>Underscore/Lo-Dash</h2>
+
+<p>For those who don&#8217;t know about <a href='http://lodash.com/'>Lo-Dash</a>, it&#8217;s an enhanced version of <a href='http://underscorejs.org/'>Underscore</a> that brings about performance, additional features, and customization in builds. If you haven&#8217;t heard of Underscore/Lo-Dash or haven&#8217;t seen the eponymous <code>_.</code> in code, do yourself a favour and check them out. But use Lo-Dash instead of Underscore.</p>
+
+<h2 id='modular_builds'>Modular Builds</h2>
+
+<p>One of the best parts of the last few years in Javascript development is a trend away from monolithic libraries toward breaking down code into small, narrowly-focused modules and composing/combining them into larger modules as needed. This has numerous benefits, one of which is a reduced download size for our users. To this end the <a href='http://lodash.com/custom-builds'>Lo-Dash CLI</a> can compile custom builds with only the functions you specify. For example, if all you wanted from Lo-Dash was <a href='http://lodash.com/docs#pluck'><code>_.pluck</code></a> and <a href='http://lodash.com/docs#zipObject'><code>_.zipObject</code></a>, you could generate a build with the following command:</p>
+
+<pre><code>$&gt; lodash include=pluck,zipObject</code></pre>
+
+<p>That&#8217;s all well and good if you know which functions you&#8217;ll use ahead of time. But during development I find myself dipping liberally into Lo-Dash&#8217;s bucket of functions, so I include the full library. For deployment, I&#8217;d like to build a minimal Lo-Dash library comprised of only the functions I actually use in my code.</p>
+
+<p>Since I&#8217;m <del>lazy</del> a developer, I don&#8217;t want to have to parse through my code manually to determine which Lo-Dash functions I used. When I was using <a href='http://gruntjs.com/'>Grunt</a> as my task runner I built an npm module, <a href='https://github.com/jjt/grunt-lodash-autobuild'>grunt-lodash-autobuild</a>, to automate the process. Pretty simple stuff: it uses <code>shell.grep</code> to find all of the calls to Lo-Dash functions and passes the names to <a href='https://github.com/lodash/grunt-lodash'>grunt-lodash</a> which does the actual build.</p>
+
+<p>Now that I&#8217;m on <a href='http://gulpjs.com/'>Gulp</a>*, I wanted to replicate that Grunt plugin and started reading about best practices for Gulp plugins. Then it hit me: composition of small, narrowly-focused modules. That&#8217;s right in line with the Linux/UNIX design philosophy.</p>
+
+<p>*<em>note: As of publication time. Tomorrow I might have switched to Broccoli, and next week the new new new hotness in build systems.</em></p>
+
+<h2 id='composability'>Composability</h2>
+
+<p>Since we can rely on the Lo-Dash CLI, all we have to do is get all of the function names in our source code, format them, and pass them as an argument to <code>lodash</code>.</p>
+
+<p>To do this, we&#8217;ll start by using <a href='http://beyondgrep.com/'>Ack</a> to get a list of all Lo-Dash functions that we&#8217;ve used in our code. I&#8217;m sure that grep could easily handle this job as well, but Ack has been a welcome addition for me over the past few years. It&#8217;s portable, fast, has better output by default, and has great configuration options (per-directory <code>.ackrc</code> files are fantastic).</p>
+
+<p>Since the Lo-Dash function names are all camelCase, we can use a simple regular expression that captures just the function name: <code>_\.(\w*)</code>. The <code>-h</code> flag suppresses the filename output and <code>--output &#39;$1&#39;</code> tells Ack that we want to output the first capture group instead of the entire match with surrounding line:</p>
+
+<pre><code>$&gt; ack &#39;_\.(\w*)&#39; -h --output &#39;$1&#39;
+union
+zipObject
+pluck
+find
+find
+find
+
+isArray
+
+merge
+sortBy
+
+assign
+#...</code></pre>
+
+<p>Great, so now we have a large list of all the function names. Only problem is the whitespace and duplicated function names. So we run that through <a href='http://unixhelp.ed.ac.uk/CGI/man-cgi?sort'><code>sort</code></a>, with the <code>--unique</code> or <code>-u</code> flag which - you might want to sit down - gives us a sorted list with duplicates removed:</p>
+
+<pre><code>$&gt; ack &#39;_\.(\w*)&#39; -h --output &#39;$1&#39; | sort -u
+assign
+contains
+each
+find
+isArray
+map
+merge
+pluck
+random
+sortBy
+union
+zipObject</code></pre>
+
+<p>Then on to the next UNIX workhorse, <a href='http://unixhelp.ed.ac.uk/CGI/man-cgi?tr'><code>tr</code></a>. We want to replace all newlines (<code>&#39;\n&#39;</code>) with commas (<code>&#39;,&#39;</code>):</p>
+
+<pre><code>$&gt; ack &#39;_\.(\w*)&#39; -h --output &#39;$1&#39; | sort -u | tr &#39;\n&#39; &#39;,&#39;
+assign,contains,each,find,isArray,map,merge,pluck,random,sortBy,union,zipObject,</code></pre>
+
+<p>The Lo-Dash CLI doesn&#8217;t complain about the trailing comma. If it did, we could just pipe the output of <code>tr</code> into <code>sed &#39;s/,$//&#39;</code> to strip it out.</p>
+
+<p>And now we&#8217;re done! We just need to feed the previous output into the <code>include</code> parameter of <code>lodash</code>:</p>
+
+<pre><code> $&gt; lodash include=$(ack &#39;_\.(\w*)&#39; -h --output &#39;$1&#39; | sort -u | tr &#39;\n&#39; &#39;,&#39;)</code></pre>
+
+<p>This could easily be integrated with your task runner of choice by wrapping it in a shell call, or just triggered manually if you eschew Gulp et al and like to roll it raw.</p>
+
+<p>Composition. It&#8217;s what&#8217;s for dinner.</p>
+  </div>
+</div>
+
+<div class="r">
+  <div class="g-12">
+    <h2>Comments <span class='subhead'>(Disqus, naturally)</span></h2>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'jjtio';
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  </div>
+</div>
+
+<div class="r">
+ <div class="g-12">
+   <p><em>Suggestions? Ping me <a href="http://twitter.com/jasontrill/">on Twitter @jasontrill</a>,
+    or <a href="https://github.com/jjt/jjt.github.io/issues">open a Github issue</a>.
+    Pull requests are gladly accepted, but open an issue first to talk about any major changes.
+  </em></p>
+
+    <h2>Recent articles</h2>
+      <ul class="posts list-plain list-delta">
+        
+          <li><a href="/2014/07/30/building-a-board-game-with-react-js/">Building a board game with React.js</a> <span>30 Jul 2014</span></li>
+        
+          <li><a href="/2014/07/18/analyzing-source-files-to-automatically-create-custom-lo-dash-builds-in-73-characters/">Analyzing source files to automatically create custom Lo-Dash builds in 73 characters</a> <span>18 Jul 2014</span></li>
+        
+          <li><a href="/2014/02/13/luxtrubuk-a-jeopardy-simulator-built-on-react/">LUXTRUBUK: a JEOPARDY!™ simulator built on React</a> <span>13 Feb 2014</span></li>
+        
+          <li><a href="/2014/01/08/some-thoughts-on-web-development-practices/">Some thoughts on web development practices</a> <span>08 Jan 2014</span></li>
+        
+          <li><a href="/2013/11/25/why-any-developer-should-check-out-the-ergodox-keyboard/">The ErgoDox keyboard a year in, and why you should get one</a> <span>25 Nov 2013</span></li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+
+ </div>
+</div>
+
+      </div>
+
+      </div>
+
+      <div id="footer" class="footer container">
+          <a href="http://github.com/jjt/">github.com/jjt</a>
+          <a href="http://twitter.com/jasontrill/">twitter.com/jasontrill</a>
+          <a href="mailto:jason@jasontrill.com">jason@jasontrill.com</a>
+          <span>&copy;Jason Trill</span>
+      </div>
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-11820998-2', 'jjt.io');
+        ga('send', 'pageview');
+
+      </script>
+    </body>
+</html>
+

@@ -1,0 +1,18 @@
+{
+  "name": "solarized",
+  "version": "0.1.2",
+  "main": "css/solarized.css",
+  "ignore": [
+    ".sass-cache"
+  ],
+  "homepage": "https://github.com/jjt/bower-solarized",
+  "_release": "0.1.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.1.2",
+    "commit": "93870ab42b34c4573b64a28aa70fdd8323eeb5bf"
+  },
+  "_source": "git://github.com/jjt/bower-solarized.git",
+  "_target": "~0.1.2",
+  "_originalSource": "solarized"
+}

@@ -1,0 +1,517 @@
+/*!
+Pure v0.2.1-pre
+Copyright 2013 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+https://github.com/yui/pure/blob/master/LICENSE.md
+*/
+
+/*!
+normalize.css v1.1.2 | MIT License | git.io/normalize
+Copyright (c) Nicolas Gallagher and Jonathan Neal
+*/
+
+/* This page has Normalize.css form-specific style rules applied to a .pure-form context */
+
+/* ==========
+   Forms Core
+   =========*/
+
+/*
+ * Corrects margin displayed oddly in IE 6/7.
+ */
+
+.#{$pure-classes-prefix}-form {
+  margin: 0;
+}
+
+/*
+ * Define consistent border, margin, and padding.
+ */
+
+.#{$pure-classes-prefix}-form fieldset {
+  border: 1px solid #c0c0c0;
+  margin: 0 2px;
+  padding: 0.35em 0.625em 0.75em;
+}
+
+/*
+ * 1. Corrects color not being inherited in IE 6/7/8/9.
+ * 2. Corrects text not wrapping in Firefox 3.
+ * 3. Corrects alignment displayed oddly in IE 6/7.
+ */
+
+.#{$pure-classes-prefix}-form legend {
+  border: 0;
+  /* 1 */
+  padding: 0;
+  white-space: normal;
+  /* 2 */
+  *margin-left: -7px;
+  /* 3 */
+}
+
+/*
+ * 1. Corrects font size not being inherited in all browsers.
+ * 2. Addresses margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improves appearance and consistency in all browsers.
+ */
+
+.#{$pure-classes-prefix}-form button,
+.#{$pure-classes-prefix}-form input,
+.#{$pure-classes-prefix}-form select,
+.#{$pure-classes-prefix}-form textarea {
+  font-size: 100%;
+  /* 1 */
+  margin: 0;
+  /* 2 */
+  vertical-align: baseline;
+  /* 3 */
+  *vertical-align: middle;
+  /* 3 */
+}
+
+/*
+ * Addresses Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+.#{$pure-classes-prefix}-form button,
+.#{$pure-classes-prefix}-form input {
+  line-height: normal;
+}
+
+/*
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Corrects inability to style clickable `input` types in iOS.
+ * 3. Improves usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Removes inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+.#{$pure-classes-prefix}-form button,
+.#{$pure-classes-prefix}-form input[type="button"],
+/* 1 */
+.#{$pure-classes-prefix}-form input[type="reset"],
+.#{$pure-classes-prefix}-form input[type="submit"] {
+  -webkit-appearance: button;
+  /* 2 */
+  cursor: pointer;
+  /* 3 */
+  *overflow: visible;
+  /* 4 */
+}
+
+/*
+ * Re-set default cursor for disabled elements.
+ */
+
+.#{$pure-classes-prefix}-form button[disabled],
+.#{$pure-classes-prefix}-form input[disabled] {
+  cursor: default;
+}
+
+/*
+ * 1. Addresses box sizing set to content-box in IE 8/9.
+ * 2. Removes excess padding in IE 8/9.
+ * 3. Removes excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+.#{$pure-classes-prefix}-form input[type="checkbox"],
+.#{$pure-classes-prefix}-form input[type="radio"] {
+  box-sizing: border-box;
+  /* 1 */
+  padding: 0;
+  /* 2 */
+  *height: 13px;
+  /* 3 */
+  *width: 13px;
+  /* 3 */
+}
+
+/*
+ * 1. Addresses `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Addresses `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+.#{$pure-classes-prefix}-form input[type="search"] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  /* 2 */
+  box-sizing: content-box;
+}
+
+/*
+ * Removes inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+.#{$pure-classes-prefix}-form input[type="search"]::-webkit-search-cancel-button,
+.#{$pure-classes-prefix}-form input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/*
+ * Removes inner padding and border in Firefox 3+.
+ */
+
+.#{$pure-classes-prefix}-form button::-moz-focus-inner,
+.#{$pure-classes-prefix}-form input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/*
+ * 1. Removes default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improves readability and alignment in all browsers.
+ */
+
+.#{$pure-classes-prefix}-form textarea {
+  overflow: auto;
+  /* 1 */
+  vertical-align: top;
+  /* 2 */
+}
+
+.#{$pure-classes-prefix}-form input[type="text"],
+.#{$pure-classes-prefix}-form input[type="password"],
+.#{$pure-classes-prefix}-form input[type="email"],
+.#{$pure-classes-prefix}-form input[type="url"],
+.#{$pure-classes-prefix}-form input[type="date"],
+.#{$pure-classes-prefix}-form input[type="month"],
+.#{$pure-classes-prefix}-form input[type="time"],
+.#{$pure-classes-prefix}-form input[type="datetime"],
+.#{$pure-classes-prefix}-form input[type="datetime-local"],
+.#{$pure-classes-prefix}-form input[type="week"],
+.#{$pure-classes-prefix}-form input[type="number"],
+.#{$pure-classes-prefix}-form input[type="search"],
+.#{$pure-classes-prefix}-form input[type="tel"],
+.#{$pure-classes-prefix}-form input[type="color"],
+.#{$pure-classes-prefix}-form select,
+.#{$pure-classes-prefix}-form textarea {
+  padding: 0.5em 0.6em;
+  display: inline-block;
+  border: 1px solid #ccc;
+  font-size: 0.8em;
+  box-shadow: inset 0 1px 3px #ddd;
+  border-radius: 4px;
+  -webkit-transition: 0.3s linear border;
+  -moz-transition: 0.3s linear border;
+  -ms-transition: 0.3s linear border;
+  -o-transition: 0.3s linear border;
+  transition: 0.3s linear border;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+.#{$pure-classes-prefix}-form input[type="text"]:focus,
+.#{$pure-classes-prefix}-form input[type="password"]:focus,
+.#{$pure-classes-prefix}-form input[type="email"]:focus,
+.#{$pure-classes-prefix}-form input[type="url"]:focus,
+.#{$pure-classes-prefix}-form input[type="date"]:focus,
+.#{$pure-classes-prefix}-form input[type="month"]:focus,
+.#{$pure-classes-prefix}-form input[type="time"]:focus,
+.#{$pure-classes-prefix}-form input[type="datetime"]:focus,
+.#{$pure-classes-prefix}-form input[type="datetime-local"]:focus,
+.#{$pure-classes-prefix}-form input[type="week"]:focus,
+.#{$pure-classes-prefix}-form input[type="number"]:focus,
+.#{$pure-classes-prefix}-form input[type="search"]:focus,
+.#{$pure-classes-prefix}-form input[type="tel"]:focus,
+.#{$pure-classes-prefix}-form input[type="color"]:focus,
+.#{$pure-classes-prefix}-form select:focus,
+.#{$pure-classes-prefix}-form textarea:focus {
+  outline: 0;
+  outline: thin dotted \9;
+  /* IE6-9 */
+  border-color: #129FEA;
+}
+
+.#{$pure-classes-prefix}-form input[type="file"]:focus,
+.#{$pure-classes-prefix}-form input[type="radio"]:focus,
+.#{$pure-classes-prefix}-form input[type="checkbox"]:focus {
+  outline: thin dotted #333;
+  outline: 1px auto #129FEA;
+}
+
+.#{$pure-classes-prefix}-form .#{$pure-classes-prefix}-checkbox,
+.#{$pure-classes-prefix}-form .#{$pure-classes-prefix}-radio {
+  margin: 0.5em 0;
+  display: block;
+}
+
+.#{$pure-classes-prefix}-form input[type="text"][disabled],
+.#{$pure-classes-prefix}-form input[type="password"][disabled],
+.#{$pure-classes-prefix}-form input[type="email"][disabled],
+.#{$pure-classes-prefix}-form input[type="url"][disabled],
+.#{$pure-classes-prefix}-form input[type="date"][disabled],
+.#{$pure-classes-prefix}-form input[type="month"][disabled],
+.#{$pure-classes-prefix}-form input[type="time"][disabled],
+.#{$pure-classes-prefix}-form input[type="datetime"][disabled],
+.#{$pure-classes-prefix}-form input[type="datetime-local"][disabled],
+.#{$pure-classes-prefix}-form input[type="week"][disabled],
+.#{$pure-classes-prefix}-form input[type="number"][disabled],
+.#{$pure-classes-prefix}-form input[type="search"][disabled],
+.#{$pure-classes-prefix}-form input[type="tel"][disabled],
+.#{$pure-classes-prefix}-form input[type="color"][disabled],
+.#{$pure-classes-prefix}-form select[disabled],
+.#{$pure-classes-prefix}-form textarea[disabled],
+.#{$pure-classes-prefix}-form input[readonly],
+.#{$pure-classes-prefix}-form select[readonly],
+.#{$pure-classes-prefix}-form textarea[readonly] {
+  cursor: not-allowed;
+  background-color: #eaeded;
+  color: #cad2d3;
+  border-color: transparent;
+}
+
+.#{$pure-classes-prefix}-form input:focus:invalid,
+.#{$pure-classes-prefix}-form textarea:focus:invalid,
+.#{$pure-classes-prefix}-form select:focus:invalid {
+  color: #b94a48;
+  border: 1px solid #ee5f5b;
+}
+
+.#{$pure-classes-prefix}-form input:focus:invalid:focus,
+.#{$pure-classes-prefix}-form textarea:focus:invalid:focus,
+.#{$pure-classes-prefix}-form select:focus:invalid:focus {
+  border-color: #e9322d;
+}
+
+.#{$pure-classes-prefix}-form input[type="file"]:focus:invalid:focus,
+.#{$pure-classes-prefix}-form input[type="radio"]:focus:invalid:focus,
+.#{$pure-classes-prefix}-form input[type="checkbox"]:focus:invalid:focus {
+  outline-color: #e9322d;
+}
+
+.#{$pure-classes-prefix}-form select {
+  border: 1px solid #ccc;
+  background-color: white;
+}
+
+.#{$pure-classes-prefix}-form select[multiple] {
+  height: auto;
+}
+
+.#{$pure-classes-prefix}-form label {
+  margin: 0.5em 0 0.2em;
+  color: #999;
+  font-size: 90%;
+}
+
+.#{$pure-classes-prefix}-form fieldset {
+  margin: 0;
+  padding: 0.35em 0 0.75em;
+  border: 0;
+}
+
+.#{$pure-classes-prefix}-form legend {
+  display: block;
+  width: 100%;
+  padding: 0.3em 0;
+  margin-bottom: 0.3em;
+  font-size: 125%;
+  color: #333;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.#{$pure-classes-prefix}-form-stacked input[type="text"],
+.#{$pure-classes-prefix}-form-stacked input[type="password"],
+.#{$pure-classes-prefix}-form-stacked input[type="email"],
+.#{$pure-classes-prefix}-form-stacked input[type="url"],
+.#{$pure-classes-prefix}-form-stacked input[type="date"],
+.#{$pure-classes-prefix}-form-stacked input[type="month"],
+.#{$pure-classes-prefix}-form-stacked input[type="time"],
+.#{$pure-classes-prefix}-form-stacked input[type="datetime"],
+.#{$pure-classes-prefix}-form-stacked input[type="datetime-local"],
+.#{$pure-classes-prefix}-form-stacked input[type="week"],
+.#{$pure-classes-prefix}-form-stacked input[type="number"],
+.#{$pure-classes-prefix}-form-stacked input[type="search"],
+.#{$pure-classes-prefix}-form-stacked input[type="tel"],
+.#{$pure-classes-prefix}-form-stacked input[type="color"],
+.#{$pure-classes-prefix}-form-stacked select,
+.#{$pure-classes-prefix}-form-stacked label {
+  display: block;
+}
+
+.#{$pure-classes-prefix}-form-aligned input,
+.#{$pure-classes-prefix}-form-aligned textarea,
+.#{$pure-classes-prefix}-form-aligned select,
+/* NOTE: pure-help-inline is deprecated. Use .#{$pure-classes-prefix}-form-message-inline instead. */
+.#{$pure-classes-prefix}-form-aligned .#{$pure-classes-prefix}-help-inline,
+.#{$pure-classes-prefix}-form-message-inline {
+  display: inline-block;
+  *display: inline;
+  *zoom: 1;
+  vertical-align: middle;
+}
+
+/* Aligned Forms */
+
+.#{$pure-classes-prefix}-form-aligned .#{$pure-classes-prefix}-control-group {
+  margin-bottom: 0.5em;
+}
+
+.#{$pure-classes-prefix}-form-aligned .#{$pure-classes-prefix}-control-group label {
+  text-align: right;
+  display: inline-block;
+  vertical-align: middle;
+  width: 10em;
+  margin: 0 1em 0 0;
+}
+
+.#{$pure-classes-prefix}-form-aligned .#{$pure-classes-prefix}-controls {
+  margin: 1.5em 0 0 10em;
+}
+
+/* Rounded Inputs */
+
+.#{$pure-classes-prefix}-form .#{$pure-classes-prefix}-input-rounded {
+  border-radius: 20px;
+  padding-left: 1em;
+}
+
+/* Grouped Inputs */
+
+.#{$pure-classes-prefix}-form .#{$pure-classes-prefix}-group fieldset {
+  margin-bottom: 10px;
+}
+
+.#{$pure-classes-prefix}-form .#{$pure-classes-prefix}-group input {
+  display: block;
+  padding: 10px;
+  margin: 0;
+  border-radius: 0;
+  position: relative;
+  top: -1px;
+}
+
+.#{$pure-classes-prefix}-form .#{$pure-classes-prefix}-group input:focus {
+  z-index: 2;
+}
+
+.#{$pure-classes-prefix}-form .#{$pure-classes-prefix}-group input:first-child {
+  top: 1px;
+  border-radius: 4px 4px 0 0;
+}
+
+.#{$pure-classes-prefix}-form .#{$pure-classes-prefix}-group input:last-child {
+  top: -2px;
+  border-radius: 0 0 4px 4px;
+}
+
+.#{$pure-classes-prefix}-form .#{$pure-classes-prefix}-group button {
+  margin: 0.35em 0;
+}
+
+.#{$pure-classes-prefix}-form .#{$pure-classes-prefix}-input-1 {
+  width: 100%;
+}
+
+.#{$pure-classes-prefix}-form .#{$pure-classes-prefix}-input-2-3 {
+  width: 66%;
+}
+
+.#{$pure-classes-prefix}-form .#{$pure-classes-prefix}-input-1-2 {
+  width: 50%;
+}
+
+.#{$pure-classes-prefix}-form .#{$pure-classes-prefix}-input-1-3 {
+  width: 33%;
+}
+
+.#{$pure-classes-prefix}-form .#{$pure-classes-prefix}-input-1-4 {
+  width: 25%;
+}
+
+/* Inline help for forms */
+
+/* NOTE: pure-help-inline is deprecated. Use .pure-form-message-inline instead. */
+
+.#{$pure-classes-prefix}-form .#{$pure-classes-prefix}-help-inline,
+.#{$pure-classes-prefix}-form-message-inline {
+  display: inline-block;
+  padding-left: 0.3em;
+  color: #666;
+  vertical-align: middle;
+  font-size: 90%;
+}
+
+/* Block help for forms */
+
+.#{$pure-classes-prefix}-form-message {
+  display: block;
+  color: #666;
+  font-size: 90%;
+}
+
+@media only screen and (max-width : 480px) {
+  .#{$pure-classes-prefix}-form button[type="submit"] {
+    margin: 0.7em 0 0;
+  }
+
+  .#{$pure-classes-prefix}-form input[type="text"],
+  .#{$pure-classes-prefix}-form input[type="password"],
+  .#{$pure-classes-prefix}-form input[type="email"],
+  .#{$pure-classes-prefix}-form input[type="url"],
+  .#{$pure-classes-prefix}-form input[type="date"],
+  .#{$pure-classes-prefix}-form input[type="month"],
+  .#{$pure-classes-prefix}-form input[type="time"],
+  .#{$pure-classes-prefix}-form input[type="datetime"],
+  .#{$pure-classes-prefix}-form input[type="datetime-local"],
+  .#{$pure-classes-prefix}-form input[type="week"],
+  .#{$pure-classes-prefix}-form input[type="number"],
+  .#{$pure-classes-prefix}-form input[type="search"],
+  .#{$pure-classes-prefix}-form input[type="tel"],
+  .#{$pure-classes-prefix}-form input[type="color"],
+  .#{$pure-classes-prefix}-form label {
+    margin-bottom: 0.3em;
+    display: block;
+  }
+
+  .#{$pure-classes-prefix}-group input[type="text"],
+  .#{$pure-classes-prefix}-form input[type="password"],
+  .#{$pure-classes-prefix}-form input[type="email"],
+  .#{$pure-classes-prefix}-form input[type="url"],
+  .#{$pure-classes-prefix}-form input[type="date"],
+  .#{$pure-classes-prefix}-form input[type="month"],
+  .#{$pure-classes-prefix}-form input[type="time"],
+  .#{$pure-classes-prefix}-form input[type="datetime"],
+  .#{$pure-classes-prefix}-form input[type="datetime-local"],
+  .#{$pure-classes-prefix}-form input[type="week"],
+  .#{$pure-classes-prefix}-form input[type="number"],
+  .#{$pure-classes-prefix}-form input[type="search"],
+  .#{$pure-classes-prefix}-form input[type="tel"],
+  .#{$pure-classes-prefix}-form input[type="color"] {
+    margin-bottom: 0;
+  }
+
+  .#{$pure-classes-prefix}-form-aligned .#{$pure-classes-prefix}-control-group label {
+    margin-bottom: 0.3em;
+    text-align: left;
+    display: block;
+    width: 100%;
+  }
+
+  .#{$pure-classes-prefix}-form-aligned .#{$pure-classes-prefix}-controls {
+    margin: 1.5em 0 0 0;
+  }
+
+  /* NOTE: pure-help-inline is deprecated. Use .pure-form-message-inline instead. */
+
+  .#{$pure-classes-prefix}-form .#{$pure-classes-prefix}-help-inline,
+  .#{$pure-classes-prefix}-form-message-inline,
+  .#{$pure-classes-prefix}-form-message {
+    display: block;
+    font-size: 80%;
+    /* Increased bottom padding to make it group with its related input element. */
+    padding: 0.2em 0 0.8em;
+  }
+}

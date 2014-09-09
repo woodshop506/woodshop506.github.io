@@ -1,0 +1,19 @@
+{
+  "name": "pure-place",
+  "version": "0.2.4",
+  "main": "scss/_pure-placeholders.scss",
+  "repository": "git://github.com/jjt/pure-place",
+  "ignore": [
+    "./!(README.md|scss*|css*)"
+  ],
+  "homepage": "https://github.com/jjt/pure-place",
+  "_release": "0.2.4",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.2.4",
+    "commit": "865d8c64110449a3821997cf5205af81f3717185"
+  },
+  "_source": "git://github.com/jjt/pure-place.git",
+  "_target": "~0.2.4",
+  "_originalSource": "pure-place"
+}

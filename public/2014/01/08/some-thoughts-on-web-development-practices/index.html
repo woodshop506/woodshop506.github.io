@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Some thoughts on web development practices</title>
+        <meta name="viewport" content="width=device-width">
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="stylesheet" href="/css/style.css" type="text/css" media="all" />
+        <link href='http://fonts.googleapis.com/css?family=Lora:400,700' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+      <!--
+      <div class="stripey-guy">
+        <div class="container">
+          <div class="inner">
+            <div></div><div></div><div></div><div></div><div></div><div></div>
+          </div>
+        </div>
+      </div>
+      -->
+
+      
+
+      <div id="main" class="container">
+              <div class="site-header">
+        <div class="r">
+          <div class=g-12>
+            <p class=site-header-copy>
+              <span class="lined-header-span">You're reading an article on 
+                <a href="/">JJT.io</a>, a web development
+                blog by <a href="/about">Jason Trill</a>
+              </span>
+            </p>
+          </div>
+          <!--
+          <div class="g-4 text-right">
+            <p>You're reading an article on</p>
+          </div>
+          <div class="site-title-g">
+            <a href="/" class="site-title">
+              <span class="st1">J</span>
+              <span class="st2">J</span>
+              <span class="st3">T</span>
+              <span class="st4">.</span>
+              <span class="st5">I</span>
+              <span class="st6">O</span>
+            </a>
+          </div>
+
+          <div class="g-4">
+            <p>which is a blog by Jason Trill</p>
+          </div>
+          -->
+        </div>
+      </div>
+
+      <div class=site-content>
+        <div class="r post-body">
+  <div class="g-12">
+      <p class="post-meta">08 Jan 2014</p>
+      <h1>Some thoughts on web development practices</h1>
+      <p>In a decade of creating and developing web sites/apps for a variety of clients and employers I&#8217;ve used a lot of different environments and procedures. Here are some random thoughts on what makes for a good experience for everyone involved.</p>
+
+<h2 id='githg__svn__dreamweaver_lock_files__no_svc'>Git/Hg &gt; SVN &gt; Dreamweaver lock files &gt; no SVC</h2>
+
+<p>Well hopefully everyone knows that <em>any</em> sort of SVC is better than nothing, even if it is a dumb hard lock a la Dreamweaver. 2004/5 was a wild time.</p>
+
+<p>I&#8217;ve worked for many years with SVN and switched to using Git and Mercurial (Hg) in the past few years, with a preference for Git. With <a href='https://github.com'>GitHub</a> and <a href='https://bitbucket.com'>BitBucket</a>, you get a great UI on the world&#8217;s best app platform (the Intertubes). The distributed nature of Git/Hg means easier branching and great workflows, and avoids a central point of failure. A previous employer used SVN, hosted from a server in his house. Even though we were only a couple of kilometers away from each other, it was often a high-latency connection and simple things like <code>svn log</code> would often take minutes to complete. Frustrating, to say the least.</p>
+
+<p>As to Git vs Hg, Github has soundly won the war for the former. Just look at the traffic for <a href='http://www.alexa.com/siteinfo/github.com'>Github</a> vs that of <a href='http://www.alexa.com/siteinfo/bitbucket.org'>BitBucket</a>. Or that 95% of open-source web projects seem to be on Github. Most of the best OSS contributers in web development seem to work on Github projects.</p>
+
+<p><strong><em>TL;DR</em></strong> <em>Use Git and Github unless there&#8217;s a compelling reason not to.</em></p>
+
+<h2 id='rootrelative_urls_even_in_development'>Root-relative urls, even in development</h2>
+
+<p>A root-relative url is of the form <code>/path/to/resource</code>. This can apply to both static assets (<code>&lt;img src=&quot;/images/neat.gif&quot;&gt;</code>) and internal links (<code>&lt;a href=&quot;/posts/about-neat-dot-gif&quot;&gt;About neat.gif&lt;/a&gt;</code>). When a browser sees this, it fills in the missing protocol, domain, and (optional) port with that of the site. So if we&#8217;re on <code>http://neatgif.com</code> and we see an img tag pointing to <code>/images/neat.gif</code>, the browser resolves this as <code>http://neatgif.com/images/neat.gif</code>.</p>
+
+<p>Absolute urls are fine, but they require extra overhead to deal with the changes between development, staging, and production environments. If your framework or build stack deals with this for you in a configuration file, then by all means use absolute urls. But they&#8217;re not as flexible.</p>
+
+<p>Don&#8217;t use relative urls. Period. They don&#8217;t play well with pretty urls (which you&#8217;re using, right???), and lead to extra overhead determining the correct pathing (<em>Hmmm.. <code>../../../images/neat.gif</code> didn&#8217;t work&#8230; I wonder if it&#8217;s <code>../../../../images/neat.gif</code>&#8230;</em>). Using root-relative paths yeilds a <em>single</em> url for a resource, regardless of how deeply nested in directories we are.</p>
+
+<p>But how can you develop multiple sites locally if you have to serve every site out of the root of a domain? Well, by setting up&#8230;</p>
+
+<h2 id='a_separate_domain_for_each_site_you_develop'>A separate domain for each site you develop</h2>
+
+<p>Both Nginx and Apache have support for <a href='http://en.wikipedia.org/wiki/Virtual_hosting'>virtual hosts</a>, which let us alias multiple domain names to different IPs, or the same IP (127.0.0.1, for instance). I&#8217;m a fan of Nginx, but either one will work.</p>
+
+<p>The main advantage to using separate domains is that it more closely mirrors production setups. You get separate cookies/localStorage/cache/etc for each site, so that they never interfere with one another.</p>
+
+<p>To set up a development environment where you don&#8217;t have to add entries to <code>/etc/hosts</code>, I recommend DNSMasq. It&#8217;s <a href='http://daniel.hahler.de/easy-dns-wildcard-setup-for-local-domains-using-dnsmasq'>easy to set up</a> so that all domains ending in a fictitious TLD get served locally. I have any domain that matches <code>*.loc</code> or <code>*.node</code> resolving to <code>127.0.0.1</code>, and then Nginx handles each domain with virtual hosts as it sees fit.</p>
+
+<p>You can also use Nginx (and Apache, IIRC) to act as a proxy to other servers, like Node.js. Here&#8217;s a server block that will proxy any <code>*.node</code> domain to <code>localhost:3000</code>:</p>
+
+<p><code>
+   # Node servers, port 3000
+    server {
+      server_name *.node;
+      location / {
+        include proxy.conf;
+        proxy_pass http://localhost:3000;
+      }
+    }
+</code> <small><em>My `proxy.conf` is very similar to [this standard one][12], no magic.</em></small></p>
+
+<p>So if I want to spin up a new Node.js project about real time neat.gifs, all I have to do is run <code>node server.js</code>, and point my browser to <code>http://neatgifs.node</code>. <a href='http://i.imgur.com/OtHkTz1.gif'>Neat</a>.</p>
+
+<h2 id='use_a_tool_like_grunt_to_automate_repetitive_tasks'>Use a tool like Grunt to automate repetitive tasks</h2>
+
+<p>Humans are very fallible, so whenever I can automate something in the build process, I&#8217;m happy. Tools like <a href='http://gruntjs.com/'>Grunt</a> or <a href='http://gulpjs.com/'>Gulp</a> can help you with this. So instead of having to remember to concatenate then minify your js + css each time you want to pushing to production, you can just run <code>grunt build</code> and all of that will be taken care of for you.</p>
+
+<p>Another huge advantage to Grunt is the ability to duplicate workflow between developers. Instead of the css guy having to dig through his shell scripts or history to find the proper <code>compass</code> command to let another dev change the css, it can be put into a Gruntfile and checked into source control. Then instead of firing emails/IMs back and forth and copy+pasting commands, the second dev can just run <code>grunt compass</code>.</p>
+
+<p>Concat/minify and compass compilation are only a handful of the <a href='http://gruntjs.com/plugins'>more than 2,000 grunt plugins available</a>. Chances are, you can leverage at least a half dozen to make you and your developers&#8217; lives easier.</p>
+
+<h2 id='embrace_package_management'>Embrace package management</h2>
+
+<p>Package management systems have many advantages like dependency resolution, easy installation/upgrading, and (in theory) reproducability. Anyone using a form of Linux/Unix will have used them. Anyone using Rails will be familiar with <a href='http://rubygems.org/'>Rubygems</a>, Node.js devs will be familiar with <a href='http://npmjs.org'>npm</a>, and even PHP now has <a href='http://getcomposer.org/'>Composer</a>. <a href='http://bower.io'>Bower</a> brings these advantages into the world of frontend web code.</p>
+
+<p>Prior to Bower, if I needed to add a js library like <a href='http://lodash.com/'>lodash</a> to a site I would go to its home page, find the distribution, download it, and unzip into a static folder. Now it&#8217;s just <code>bower install lodash --save</code>. What&#8217;s that <code>--save</code> flag? Oh, that&#8217;s just Bower adding the installed version of lodash to <code>bower.json</code> file.</p>
+
+<p>This means that I can check <code>bower.json</code> into source control and not the libraries themselves. After another developer checks out Neatgif.com, all they have to do is run <code>bower install</code> and it will download all of the libs automatically, including any dependencies.</p>
+
+<p>When you have a half-dozen libraries (each with deps) and a team of developers, a package management system like Bower really shines.</p>
+  </div>
+</div>
+
+<div class="r">
+  <div class="g-12">
+    <h2>Comments <span class='subhead'>(Disqus, naturally)</span></h2>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'jjtio';
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  </div>
+</div>
+
+<div class="r">
+ <div class="g-12">
+   <p><em>Suggestions? Ping me <a href="http://twitter.com/jasontrill/">on Twitter @jasontrill</a>,
+    or <a href="https://github.com/jjt/jjt.github.io/issues">open a Github issue</a>.
+    Pull requests are gladly accepted, but open an issue first to talk about any major changes.
+  </em></p>
+
+    <h2>Recent articles</h2>
+      <ul class="posts list-plain list-delta">
+        
+          <li><a href="/2014/07/30/building-a-board-game-with-react-js/">Building a board game with React.js</a> <span>30 Jul 2014</span></li>
+        
+          <li><a href="/2014/07/18/analyzing-source-files-to-automatically-create-custom-lo-dash-builds-in-73-characters/">Analyzing source files to automatically create custom Lo-Dash builds in 73 characters</a> <span>18 Jul 2014</span></li>
+        
+          <li><a href="/2014/02/13/luxtrubuk-a-jeopardy-simulator-built-on-react/">LUXTRUBUK: a JEOPARDY!™ simulator built on React</a> <span>13 Feb 2014</span></li>
+        
+          <li><a href="/2014/01/08/some-thoughts-on-web-development-practices/">Some thoughts on web development practices</a> <span>08 Jan 2014</span></li>
+        
+          <li><a href="/2013/11/25/why-any-developer-should-check-out-the-ergodox-keyboard/">The ErgoDox keyboard a year in, and why you should get one</a> <span>25 Nov 2013</span></li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+
+ </div>
+</div>
+
+      </div>
+
+      </div>
+
+      <div id="footer" class="footer container">
+          <a href="http://github.com/jjt/">github.com/jjt</a>
+          <a href="http://twitter.com/jasontrill/">twitter.com/jasontrill</a>
+          <a href="mailto:jason@jasontrill.com">jason@jasontrill.com</a>
+          <span>&copy;Jason Trill</span>
+      </div>
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-11820998-2', 'jjt.io');
+        ga('send', 'pageview');
+
+      </script>
+    </body>
+</html>
+

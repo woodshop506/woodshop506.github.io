@@ -1,0 +1,7 @@
+{
+  "name": "pure-place",
+  "version": "0.2.4",
+  "main": "scss/_pure-placeholders.scss",
+  "repository": "git://github.com/jjt/pure-place",
+  "ignore": ["./!(README.md|scss*|css*)"]
+}

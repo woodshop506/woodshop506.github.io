@@ -1,0 +1,9 @@
+// Pure built as SASS classes with a custom prefix           // Default prefix
+$pure-classes-prefix: pure !default;
+
+@import "classes/base";
+@import "classes/buttons";
+@import "classes/forms";
+@import "classes/grids";
+@import "classes/menus";
+@import "classes/tables";

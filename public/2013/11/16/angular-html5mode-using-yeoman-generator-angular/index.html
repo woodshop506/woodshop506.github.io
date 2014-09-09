@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Angular html5Mode support for Yeoman & generator-angular</title>
+        <meta name="viewport" content="width=device-width">
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="stylesheet" href="/css/style.css" type="text/css" media="all" />
+        <link href='http://fonts.googleapis.com/css?family=Lora:400,700' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+      <!--
+      <div class="stripey-guy">
+        <div class="container">
+          <div class="inner">
+            <div></div><div></div><div></div><div></div><div></div><div></div>
+          </div>
+        </div>
+      </div>
+      -->
+
+      
+
+      <div id="main" class="container">
+              <div class="site-header">
+        <div class="r">
+          <div class=g-12>
+            <p class=site-header-copy>
+              <span class="lined-header-span">You're reading an article on 
+                <a href="/">JJT.io</a>, a web development
+                blog by <a href="/about">Jason Trill</a>
+              </span>
+            </p>
+          </div>
+          <!--
+          <div class="g-4 text-right">
+            <p>You're reading an article on</p>
+          </div>
+          <div class="site-title-g">
+            <a href="/" class="site-title">
+              <span class="st1">J</span>
+              <span class="st2">J</span>
+              <span class="st3">T</span>
+              <span class="st4">.</span>
+              <span class="st5">I</span>
+              <span class="st6">O</span>
+            </a>
+          </div>
+
+          <div class="g-4">
+            <p>which is a blog by Jason Trill</p>
+          </div>
+          -->
+        </div>
+      </div>
+
+      <div class=site-content>
+        <div class="r post-body">
+  <div class="g-12">
+      <p class="post-meta">16 Nov 2013</p>
+      <h1>Angular html5Mode support for Yeoman & generator-angular</h1>
+      <h2 id='smash_the_hash_angulars_html5mode_and_pushstate'>Smash the hash: Angular&#8217;s html5mode and pushState</h2>
+
+<p>In my previous article about <a href='/2013/11/14/easy-angular-development-yeoman-generator-angular/'>using generator-angular to develop Angular applications</a>, we left Angular with its default setting of using hashes for urls, for example <code>http://127.0.0.1:9000/#/foo</code>. This is the way that Angular ships by default and it&#8217;s completely fine, but for us pickier devs there&#8217;s the <a href='http://docs.angularjs.org/guide/dev_guide.services.$location#general-overview-of-the-api_$location-service-configuration'>html5Mode</a> setting which uses <a href='https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Manipulating_the_browser_history'>pushState</a> with a fallback shim for <a href='http://caniuse.com/#feat=history'>unsupported browsers</a>. There are a few things we need to do in order to enable Yeoman &amp; generator-angular to work in this way.</p>
+
+<p>First off is setting html5Mode in our app so that Angular knows we want to use pushState instead of hashes. Open up <code>app.js</code>, add the <code>$locationProvider</code> service to the <code>config</code> function, and tell Angular to use html5Mode:</p>
+
+<pre><code>.config(function ($routeProvider, $locationProvider) {
+  $locationProvider.html5Mode(true);
+  //...
+})</code></pre>
+
+<p>Easy, right? Now if we visit our app and click on a link to <code>/foo</code> for example, it should change to the &#8216;foo&#8217; view just as it did with the hash before but now our url will be <code>http://127.0.0.1:9000/foo</code>. Everything will work great when clicking around in our app, but once we start making changes to our app, livereload will refresh the browser and it will 404. Huh?</p>
+
+<h2 id='the_development_server_has_a_very_tight_focus'>The development server has a very tight focus</h2>
+
+<p>That&#8217;s happening because our connect development server doesn&#8217;t know how to serve anything other than <code>/</code> and static files. So it sees <code>/foo</code> and looks for that file, which doesn&#8217;t exist. If you&#8217;ve done any ops work using Apache or Nginx, (mod_)rewrite should spring to mind as the solution. We&#8217;ll be using the connect middleware <code>connect-modrewrite</code> for this job.</p>
+
+<p>First we&#8217;ll install it, saving it to our package.json:</p>
+
+<pre><code>$ npm install --save-dev connect-modrewrite</code></pre>
+
+<p>And then we&#8217;ll add the following snippet to our Gruntfile in the <code>connect.options</code> object which should be around line 60, in the large <code>grunt.initConfig</code> function call. This middleware rewrites any request that isn&#8217;t for a valid static file to <code>index.html</code>.</p>
+
+<pre><code>connect: {
+  options: {
+    // ...
+    // Modrewrite rule, connect.static(path) for each path in target&#39;s base
+    middleware: function (connect, options) {
+      var optBase = (typeof options.base === &#39;string&#39;) ? [options.base] : options.base;
+      return [require(&#39;connect-modrewrite&#39;)([&#39;!(\\..+)$ / [L]&#39;])].concat(
+        optBase.map(function(path){ return connect.static(path); }));
+    }
+  }
+}</code></pre>
+
+<p>Alright, now we reload our browser at <code>http://127.0.0.1:9000/foo</code> and it loads (hurray!), but our Angular app isn&#8217;t initializing and the page is unstyled (boo). If we pop open our browser&#8217;s network inspector we&#8217;ll see a bunch of 404s. This is due to&#8230;</p>
+
+<h2 id='relative_vs_rootrelative_paths'>Relative vs root-relative paths</h2>
+
+<p>Because generator-angular assumes that we&#8217;ll be using the hash mode, it generates <em>relative</em> static asset paths like:</p>
+
+<pre><code>&lt;script src=&quot;scripts/app.js&quot;&gt;&lt;/script&gt;</code></pre>
+
+<p>So when we&#8217;re at <code>http://127.0.0.1:9000/foo</code>, the browser is looking for <code>/foo/scripts/app.js</code>, which obviously doesn&#8217;t exist. There are a couple of ways to solve this, one being to use root-relative paths. I&#8217;ve been a fan of them for years when absolute urls aren&#8217;t convenient, so this is the solution I recommend.</p>
+
+<p>Since there&#8217;s no option yet to tell generator-angular to use root-relative paths, my low-tech solution is to go into <code>index.html</code> and turn every script and link tag into root-relative ones:</p>
+
+<pre><code>&lt;script src=&quot;/scripts/app.js&quot;&gt;&lt;/script&gt;</code></pre>
+
+<p>This is less automated than I&#8217;d like, but it works just fine. There is <a href='https://github.com/yeoman/generator-angular/issues/433'>some discussion</a> on the generator-angular issue tracker about adding html5mode support, or at least adding the option of a prefix on the script/link tags (either just a slash for root-relative, or a full absolute base url).</p>
+
+<p>Another option to the relative urls is to set the base url of the site by putting <code>&lt;base href=&quot;/&quot;&gt;</code> in the head, but that&#8217;s not without <a href='http://stackoverflow.com/questions/1889076/is-it-recommended-to-use-the-base-html-tag'>its problems</a>.</p>
+
+<h2 id='caveat_angtor'>Caveat Angtor</h2>
+
+<p>Note that enabling html5mode support also requires us to have a production server that can do the rewriting. One of the advantages of Angular is that we can ordinarily do a static deploy to S3 or the like, reducing ops work and server cost. So it&#8217;s up to you to decide whether or not html5mode is worth it.</p>
+  </div>
+</div>
+
+<div class="r">
+  <div class="g-12">
+    <h2>Comments <span class='subhead'>(Disqus, naturally)</span></h2>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'jjtio';
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  </div>
+</div>
+
+<div class="r">
+ <div class="g-12">
+   <p><em>Suggestions? Ping me <a href="http://twitter.com/jasontrill/">on Twitter @jasontrill</a>,
+    or <a href="https://github.com/jjt/jjt.github.io/issues">open a Github issue</a>.
+    Pull requests are gladly accepted, but open an issue first to talk about any major changes.
+  </em></p>
+
+    <h2>Recent articles</h2>
+      <ul class="posts list-plain list-delta">
+        
+          <li><a href="/2014/07/30/building-a-board-game-with-react-js/">Building a board game with React.js</a> <span>30 Jul 2014</span></li>
+        
+          <li><a href="/2014/07/18/analyzing-source-files-to-automatically-create-custom-lo-dash-builds-in-73-characters/">Analyzing source files to automatically create custom Lo-Dash builds in 73 characters</a> <span>18 Jul 2014</span></li>
+        
+          <li><a href="/2014/02/13/luxtrubuk-a-jeopardy-simulator-built-on-react/">LUXTRUBUK: a JEOPARDY!™ simulator built on React</a> <span>13 Feb 2014</span></li>
+        
+          <li><a href="/2014/01/08/some-thoughts-on-web-development-practices/">Some thoughts on web development practices</a> <span>08 Jan 2014</span></li>
+        
+          <li><a href="/2013/11/25/why-any-developer-should-check-out-the-ergodox-keyboard/">The ErgoDox keyboard a year in, and why you should get one</a> <span>25 Nov 2013</span></li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+
+ </div>
+</div>
+
+      </div>
+
+      </div>
+
+      <div id="footer" class="footer container">
+          <a href="http://github.com/jjt/">github.com/jjt</a>
+          <a href="http://twitter.com/jasontrill/">twitter.com/jasontrill</a>
+          <a href="mailto:jason@jasontrill.com">jason@jasontrill.com</a>
+          <span>&copy;Jason Trill</span>
+      </div>
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-11820998-2', 'jjt.io');
+        ga('send', 'pageview');
+
+      </script>
+    </body>
+</html>
+

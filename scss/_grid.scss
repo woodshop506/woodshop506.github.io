@@ -1,0 +1,115 @@
+@import "bourbon/bourbon";
+
+
+.vr-lines {
+  background-size: 100% $base-line-height * $base-leading-factor;
+  $r: rgba(255,0,0,0.2);
+  $b: rgba($solarized-1,0.4);
+  $t: transparent;
+  @include linear-gradient(top,
+    $t, $b, $b 1px,
+    $t 1px, $t
+  );
+}
+
+@import "neat/neat";
+
+.container {
+  @include outer-container;
+  padding:0 1rem;
+}
+
+.r {
+  @include row;
+}
+
+.r-pad-top {
+  padding-top: 1.5rem;
+}
+
+
+@for $i from 1 through 12 {
+  %g-#{$i} {
+    @include span-columns($i);
+  }
+}
+
+%g {
+  @include span-columns(12);
+}
+
+
+@mixin output-grid-classes() {
+  @for $i from 1 through 12 {
+    .g-#{$i} {
+      @extend %g-#{$i};
+    }
+  }
+  
+  .g {
+    @extend %g;
+  }
+  
+}
+
+
+
+
+
+
+
+
+
+
+.test-grid {
+  [class *= "g-"] {
+    background: rgba($solarized-blue, 0.5);
+    background-size: 50px 50px;
+    color: rgba($solarized-3, 0.8);
+    text-align:center;
+    box-sizing: border-box;
+    font-weight: bold;
+    margin-bottom: rem(14);
+    color:rgba(#000, 0.6);
+    p {
+      margin-bottom:rem(6);
+    }
+  }
+
+
+  @for $i from 1 through 12 {
+    $ci: $i;
+    @if $ci > 6 {
+      $ci: $ci - 6;
+    }
+    $color-index: nth($site-title-colors, 7 - $ci);
+    $color: nth($solarized-accent-colors, $color-index); 
+    $color-bg: rgba($color, 0.5);
+    .g-#{$i} {
+      @include span-columns($i);
+      background-color: $color-bg; 
+      color: darken($color,15%);
+      @if $i > 6 {
+        @include linear-gradient(-45deg,
+          rgba(#fff,0.1) 25%,
+          transparent 25%,
+          transparent 50%,
+          rgba(#fff,0.1) 50%,
+          rgba(#fff,0.1) 75%,
+          transparent 75%,
+          transparent,
+          $fallback: $color-bg);   
+      } 
+    }
+  }
+}
+
+
+// Responsive
+ 
+@media screen and (max-width: $max-width) {
+  [class *= "g-"] {
+    width:100% !important;
+    float:none !important;
+  }
+}

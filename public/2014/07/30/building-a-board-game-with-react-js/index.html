@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Building a board game with React.js</title>
+        <meta name="viewport" content="width=device-width">
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="stylesheet" href="/css/style.css" type="text/css" media="all" />
+        <link href='http://fonts.googleapis.com/css?family=Lora:400,700' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+      <!--
+      <div class="stripey-guy">
+        <div class="container">
+          <div class="inner">
+            <div></div><div></div><div></div><div></div><div></div><div></div>
+          </div>
+        </div>
+      </div>
+      -->
+
+      
+
+      <div id="main" class="container">
+              <div class="site-header">
+        <div class="r">
+          <div class=g-12>
+            <p class=site-header-copy>
+              <span class="lined-header-span">You're reading an article on 
+                <a href="/">JJT.io</a>, a web development
+                blog by <a href="/about">Jason Trill</a>
+              </span>
+            </p>
+          </div>
+          <!--
+          <div class="g-4 text-right">
+            <p>You're reading an article on</p>
+          </div>
+          <div class="site-title-g">
+            <a href="/" class="site-title">
+              <span class="st1">J</span>
+              <span class="st2">J</span>
+              <span class="st3">T</span>
+              <span class="st4">.</span>
+              <span class="st5">I</span>
+              <span class="st6">O</span>
+            </a>
+          </div>
+
+          <div class="g-4">
+            <p>which is a blog by Jason Trill</p>
+          </div>
+          -->
+        </div>
+      </div>
+
+      <div class=site-content>
+        <div class="r post-body">
+  <div class="g-12">
+      <p class="post-meta">30 Jul 2014</p>
+      <h1>Building a board game with React.js</h1>
+      <h2 id='defcon_fun'>DEFCON: Fun</h2>
+
+<p>If you like board games and are looking for an intense 1v1 Cold War experience where luck plays a small but not insignificant part, look no further than <a href='http://en.wikipedia.org/wiki/Twilight_Struggle'>Twilight Struggle</a>. There&#8217;s a good reason it&#8217;s <a href='http://boardgamegeek.com/browse/boardgame'>#1 on BoardGameGeek</a>. Its simple mechanic belies a deeper strategic richness.</p>
+
+<p><a href='http://twistrug.jjt.io/images/tsboard.jpg'><img alt='Twilight Struggle Board' src='http://twistrug.jjt.io/images/tsboard-sm.jpg' /></a></p>
+
+<p>The best synopsis I&#8217;ve read is from a <a href='http://boardgamegeek.com/thread/471953/rogers-reviews-deluxe-twilight-struggle-comprehens'>BGG review</a>:</p>
+
+<blockquote>
+<p>Twilight Struggle is a card driven game played over a maximum of 10 turns. The game may end sooner (and frequently does).</p>
+</blockquote>
+
+<blockquote>
+<p><span>It</span> is fundamentally a game about area control. There are six geopolitical regions on the map: Europe (split into Eastern and Western Europe subregions), Asia (including the Southeast Asia subregion), the Middle East, Africa, Central America, and South America. Within each region are countries that have a stability number, representing how stable the government tends to be.</p>
+</blockquote>
+
+<blockquote>
+<p>Having control of countries helps determine whether you have presence, domination, or control of a region, which in turn helps you earn victory points. Within each region, there are a number of battleground countries, which are considered key to the region.</p>
+</blockquote>
+
+<p>I was hooked from my first play and soon started searching out a resource for learning about the 110 unique cards. I came across the inimitable <a href='http://twilightstrategy.com/'>Twilight Strategy</a> but quickly became overwhelmed by each card page referencing at least six other cards, all unlinked. So I made <a href='http://twistrug.jjt.io'>TwiStrug</a> as a way to learn the cards more readily (hyperlinks!). Then I started thinking about how to optimize the board layout for a smaller screen, which then quickly spiralled out of control into building a playable virtual board because hey, I&#8217;m that kind of nerd.</p>
+
+<p>The tool of choice for such an undertaking? <a href='http://facebook.github.io/react/index.html'>React</a>, with a <a href='https://github.com/flatiron/director'>router</a> and other libs of sundry to glue everything together.</p>
+
+<h2 id='react'>React</h2>
+
+<p>React components at their core are very simple to reason about. They&#8217;re encapsulated objects with <em>properties</em>, <em>state</em>, and a <code>render()</code> method that renders the component. A component&#8217;s <code>render()</code> method functions as a template that contains markup and/or other React components.</p>
+
+<p>Component properties should be treated as immutable and are passed in by either the top-level <a href='http://facebook.github.io/react/docs/top-level-api.html#react.rendercomponent'><code>React.renderComponent()</code></a>) function or a parent React component. State is mutable, internal to a component, and shouldn&#8217;t be modified from outside. Whenever the properties or state of a component change, React renders the component but only modifies the DOM if anything changed. How? By rendering components to a <em>virtual DOM</em> then <a href='http://calendar.perfplanet.com/2013/diff/'>efficiently diffing it</a> with the actual DOM, changing only what&#8217;s necessary.</p>
+
+<p>Beyond the basics, React components also have <a href='http://facebook.github.io/react/docs/events.html'>events</a>, <a href='http://facebook.github.io/react/docs/reusable-components.html#mixins'>mixins</a>, and a number of <a href='http://facebook.github.io/react/docs/component-specs.html'>lifecycle methods</a> for fine-grained control.</p>
+
+<h2 id='twistrug_'>TwiStrug <span class='subhead'>(codename: "Twist Rug")</span></h2>
+
+<p>TwiStrug is structured around nested React components. There&#8217;s a main React component, <a href='https://github.com/jjt/TwiStrug/blob/master/src/Twistrug.coffee'><code>TwiStrug</code></a>, with a <a href='https://github.com/jjt/TwiStrug/blob/master/src/router.coffee'>router</a> mixed in. This is the entry point for the app and handles all routing and top-level controller concerns.</p>
+
+<p>I use <a href='http://browserify.org/'>Browserify</a> to bundle almost everything, including <a href='https://github.com/jjt/TwiStrug/blob/master/app/data/cards.json'>card</a> and <a href='https://github.com/jjt/TwiStrug/blob/master/app/data/map-data.json'>board</a> data. I&#8217;m using Browserify transforms <a href='https://github.com/jnordberg/coffeeify'>coffeeify</a> to compile CoffeeScript, and <a href='https://github.com/substack/bulkify'>bulkify</a> which lets us write <a href='https://github.com/jjt/TwiStrug/blob/master/src/libs/index.coffee'>one-line index modules</a>:</p>
+
+<pre><code># libs/sum.coffee
+module.exports = (a,b) -&gt; a + b
+
+# libs/index.coffee
+module.exports = require(&#39;bulk-require&#39;)(__dirname, [&#39;*.coffee&#39;])
+    
+# main.coffee
+libs = require(&#39;./libs&#39;)
+libs.sum(2,5)
+// 7</code></pre>
+
+<p>The application <a href='https://github.com/jjt/TwiStrug/tree/master/src'>file structure</a> is pretty simple:</p>
+
+<pre><code>views/            React components, each in its own file  
+pages/            Views that represent a url (#/cards, #/board, etc)  
+libs/             A melting pot of classes and utility functions  
+TwiStrug.coffee   Main entry point  
+router.coffee     Routing mixin for above  </code></pre>
+
+<p>The app takes incoming routes and sets the state of <code>TwiStrug</code> to the appropriate key to load a view from <code>/pages</code>. When React detects that change in state, it runs <a href='https://github.com/jjt/TwiStrug/blob/master/src/Twistrug.coffee#L55'><code>TwiStrug.render()</code></a> and shows the page. To change pages, just change the state of the main component. Easy peasy.</p>
+
+<h2 id='virtual_board'>Virtual Board</h2>
+
+<p><a href='http://twistrug.jjt.io/#/board'><img alt='TwiStrug virtual board' src='http://twistrug.jjt.io/images/home-board.jpg' /></a></p>
+
+<p>When you think about it, game boards are just a physical representation of the state of a game at any given time. When a player moves their token from one place to another it&#8217;s like updating an object in memory (or creating a new immutable state object if that&#8217;s your thing). On most physical boards, the state and its display are one and the same. On a computer, they are decoupled. React is a perfect fit for doing a board game because you just have to worry about changing the game state and React will automatically figure out what needs to change to display the board.</p>
+
+<p>State can quickly become unwieldy if it&#8217;s scattered hither and yon, so I elected to keep all of the game state in the main board component, <a href='https://github.com/jjt/TwiStrug/blob/master/src/views/Board.coffee#L86'><code>Board</code></a>. I implemented an <a href='https://github.com/jjt/TwiStrug/blob/master/src/libs/StateHistory.coffee'>action history</a> which is an array of objects, each comprised of the new board state and metadata about the state change. At the risk of sounding like a broken record, React makes stepping through the history almost trivially easy. When a user undoes/redoes an action, we just have to grab the state from the history, set <code>Board.state.game</code> and voila, the board is back to where it was.</p>
+
+<p>I designed the board for local play, but a user on BGG suggested that a sharable state through the url would enable remote play. So every time the board state is updated, the url reflects the change. Turns out that the entire board can fit handily into 176 characters: 8 for the game stats (DEFCON, score, turn, etc.), and 168 for the influence points in 84 countries. So whenever the board page is (re)loaded, it checks for a board state from the url, then localStorage, then finally the initial setup (representing a new game), and sets the board based on the first one found.</p>
+
+<p><a href='https://github.com/jjt/TwiStrug/blob/master/src/views/Board.coffee#L273'><code>Board.render()</code></a> renders sub-components whose properties are comprised of <code>Board.props</code> (country info+positions) and <code>Board.state</code>. None of the sub-components have their own state (with the exception of the dice) which makes things nice and easy to reason about. However, this means that we have to have some way of a child component letting its parent know that an action has taken place, such as moving DEFCON from 4 to 3. The recommended way is for the parent to pass a handler method as a property on the child component.</p>
+
+<p>For example let&#8217;s look at what happens when someone interacts with a <a href='https://github.com/jjt/TwiStrug/blob/master/src/views/BoardStatusValue.coffee'><code>BoardStatusValue</code></a> component to move DEFCON from 4 to 3. The arrows each have an <a href='https://github.com/jjt/TwiStrug/blob/master/src/views/BoardStatusValue.coffee#L15'><code>onClick</code></a> handler, which is <code>@props.handleValClick()</code>. This handler is passed in as a property by its parent component, <a href='https://github.com/jjt/TwiStrug/blob/master/src/views/BoardStatus.coffee#L61'><code>BoardStatus</code></a>, which in turn is a property passed in from <a href='https://github.com/jjt/TwiStrug/blob/master/src/views/Board.coffee#L336'><code>Board</code></a>. So when someone clicks an arrow in <code>BoardStatusValue</code>, it&#8217;s really calling <code>Board.handleValClick()</code>. This system works, and it preserves the idea that components should have no knowledge of their parents, but it would quickly become tedious if we had a dozen such click handlers spread across numerous deeply-nested components. Even so, React is a great choice for representing a stateful system like a board game.</p>
+
+<h2 id='keyboard_all_the_things'>Keyboard all the things!!</h2>
+
+<p>I&#8217;m BFFs with my keyboard, as any developer should be. Consequently, everything on the TwiStrug board is controllable by keyboard shortcuts, right down to rolling the dice. My favorite part of the whole project has to be how the influence placement turned out. Here&#8217;s a short gif/gfy/webm of a standard USSR setup:</p>
+<a href='http://twistrug.jjt.io/data/twistrug-ip-keyboard-placement-720p.webm' title='Click for 720p webm'><img class='gfyitem' data-id='ClearcutAdolescentCoelacanth' /></a>
+<p>I used the following sequence to record that video:</p>
+
+<pre><code>    i               // Start (I)PbK mode
+    e               // Select (E)urope
+    e               // Select (E)ast Germany
+    r enter         // +1 USSR in East Germany, confirm
+    p               // Select (P)oland
+    r r r r enter   // +4 USSR in Poland, confirm
+    y               // Select (Y)ugoslavia 
+    r enter         // +1 USSR in Yugoslavia, confirm
+    esc             // Exit Europe selection
+    esc             // Exit IPbK mode</code></pre>
+
+<p>It looks even better without comments or newlines: <code>i e e r enter p r r r r enter y r enter esc esc</code>. I went slowly in the video to demonstrate the system - once you learn the shortcuts it&#8217;s quick to do everything on the board.</p>
+
+<h2 id='card_reference'>Card Reference</h2>
+
+<p><a href='http://twistrug.jjt.io/#/cards'><img alt='TwiStrug Card Reference' src='http://twistrug.jjt.io/images/home-cards.jpg' /></a></p>
+
+<p>Not too much to write about for this one. The <a href='https://github.com/jjt/TwiStrug/blob/master/src/pages/Cards.coffee'><code>Cards</code></a> page component has three stateful parts: sort order, filtering by card id, and a toggle to show the full text of the card. Whenever any of those change from a user interacting with the controls, changing the url, or reloading the page, React updates the page accordingly by <a href='https://github.com/jjt/TwiStrug/blob/master/src/pages/Cards.coffee#L137-L149'>sorting and filtering the set of cards</a> and rendering them. Unlike other view layers where you might have to distinguish between the state on page load and in response to user action, a React component doesn&#8217;t care. It&#8217;s concerned with props and state, that&#8217;s it.</p>
+
+<p>Each card has a detail page with a <a href='https://github.com/jjt/TwiStrug/blob/master/src/pages/Card.coffee'>simple component</a> that just renders the data for the card. All of the logic for loading a given card and navigating between the cards is in <a href='https://github.com/jjt/TwiStrug/blob/master/src/router.coffee#L45-L53'>the router</a>.</p>
+
+<h2 id='refactoring_and_hindsight'>Refactoring and Hindsight</h2>
+
+<p><code>views/Board</code> is pretty chunky. In addition to the keyboard IP placement stuff, it&#8217;s got a bunch of board state logic which should be moved into a separate model. This would make <code>views/Board</code> less of a <em>viewModel</em> and more of a pure <em>view</em>. The coupling isn&#8217;t too concerning though, as the board is only really used in that one view.</p>
+
+<p>I&#8217;m a huge fan of <a href='http://coffeescript.org/'>CoffeeScript</a> and use it wherever I can. I didn&#8217;t want to give it up to use <a href='http://facebook.github.io/react/docs/jsx-in-depth.html'>JSX</a>, so I used the bare <code>React.DOM</code> methods as outlined in <a href='http://blog.vjeux.com/2013/javascript/react-coffeescript.html'>a blog post</a> by React developer <a href='https://twitter.com/Vjeux'>Vjeux</a>. It works for the most part but I had to straddle the syntactical line between brittle and overwrought, with all of the extra brackets. I&#8217;d like to move the <a href='https://github.com/jjt/TwiStrug/blob/master/src/views/BoardNodeIP.coffee#L31-L48'>return value</a> of each <code>render()</code> method into its own JSX module, and treat it much like a traditional template (Jade, Handlebars, etc). JSX compilation would be handled by a Browserify transform: <a href='https://github.com/andreypopp/reactify'>reactify</a>.</p>
+
+<p>The board state is a structured object, and something like <a href='https://github.com/mquan/cortex'>Cortex</a> would be useful. Either that or I should switch the representation of board state from a nice object to its 176-char encoded form and use functions or board model methods to decode/encode when necessary. Either solution would make it easier for React to pick up on state changes and eliminate the few <code>shouldComponentUpdate()</code> methods that I defined (likely a premature optimization).</p>
+
+<h2 id='my_reaction_'>My React-ion <span class='subhead'>(harharhar)</span></h2>
+
+<p>Interacting with the DOM and keeping it in sync with state in a performant and robust way can be one of the hardest parts of designing web apps these days. The push for true two-way binding and excitement around <a href='http://bocoup.com/weblog/javascript-object-observe/'>Object.observe</a> should illustrate this. React saves developers time and headache by treating the DOM as a stateless canvas and re-rendering a component based on its state.</p>
+
+<p>And to top it all off the <a href='http://jsfiddle.net/vjeux/Zf5sQ/'>#reactjs IRC</a> is well populated and the React developers are usually there, willing to lend a hand. I&#8217;ve asked a couple of stupid/obvious questions and they were answered fully and without a hint of impatience.</p>
+
+<p>I wouldn&#8217;t be surprised if React found its way into the Backbones, Embers, and Angulars of the future. Or dispatching the MVC paradigm entirely, there&#8217;s <a href='http://facebook.github.io/react/docs/flux-overview.html'>Flux</a> for large sites, or homespun MVC-ish architectures like that used in TwiStrug for smaller sites.</p>
+
+<p><em>TL;DR I ♥ React</em></p>
+<script>
+ (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = 'http://assets.gfycat.com/js/gfyajax-0.517d.js';
+    s.parentNode.insertBefore(g, s);
+}(document, 'script'));
+</script>
+  </div>
+</div>
+
+<div class="r">
+  <div class="g-12">
+    <h2>Comments <span class='subhead'>(Disqus, naturally)</span></h2>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'jjtio';
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  </div>
+</div>
+
+<div class="r">
+ <div class="g-12">
+   <p><em>Suggestions? Ping me <a href="http://twitter.com/jasontrill/">on Twitter @jasontrill</a>,
+    or <a href="https://github.com/jjt/jjt.github.io/issues">open a Github issue</a>.
+    Pull requests are gladly accepted, but open an issue first to talk about any major changes.
+  </em></p>
+
+    <h2>Recent articles</h2>
+      <ul class="posts list-plain list-delta">
+        
+          <li><a href="/2014/07/30/building-a-board-game-with-react-js/">Building a board game with React.js</a> <span>30 Jul 2014</span></li>
+        
+          <li><a href="/2014/07/18/analyzing-source-files-to-automatically-create-custom-lo-dash-builds-in-73-characters/">Analyzing source files to automatically create custom Lo-Dash builds in 73 characters</a> <span>18 Jul 2014</span></li>
+        
+          <li><a href="/2014/02/13/luxtrubuk-a-jeopardy-simulator-built-on-react/">LUXTRUBUK: a JEOPARDY!™ simulator built on React</a> <span>13 Feb 2014</span></li>
+        
+          <li><a href="/2014/01/08/some-thoughts-on-web-development-practices/">Some thoughts on web development practices</a> <span>08 Jan 2014</span></li>
+        
+          <li><a href="/2013/11/25/why-any-developer-should-check-out-the-ergodox-keyboard/">The ErgoDox keyboard a year in, and why you should get one</a> <span>25 Nov 2013</span></li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+
+ </div>
+</div>
+
+      </div>
+
+      </div>
+
+      <div id="footer" class="footer container">
+          <a href="http://github.com/jjt/">github.com/jjt</a>
+          <a href="http://twitter.com/jasontrill/">twitter.com/jasontrill</a>
+          <a href="mailto:jason@jasontrill.com">jason@jasontrill.com</a>
+          <span>&copy;Jason Trill</span>
+      </div>
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-11820998-2', 'jjt.io');
+        ga('send', 'pageview');
+
+      </script>
+    </body>
+</html>
+
