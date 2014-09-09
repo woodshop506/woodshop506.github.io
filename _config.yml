@@ -1,5 +1,4 @@
 name: Woodshop506
-baseurl: /starter
 permalink: pretty
 markdown: rdiscount
 prose:
